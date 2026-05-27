@@ -1,0 +1,8 @@
+-- database.sql (updated schema with resume column optional)
+DROP DATABASE IF EXISTS job_portal;
+CREATE DATABASE job_portal;
+USE job_portal;
+CREATE TABLE users ( id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE NOT NULL, password VARCHAR(255) NOT NULL, role ENUM('job_seeker','employer') DEFAULT 'job_seeker', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP );
+CREATE TABLE jobs ( id INT PRIMARY KEY AUTO_INCREMENT, employer_id INT NOT NULL, title VARCHAR(200) NOT NULL, company VARCHAR(200) NOT NULL, location VARCHAR(200) NOT NULL, salary VARCHAR(100), job_type ENUM('Full-time','Part-time','Contract','Remote') DEFAULT 'Full-time', description TEXT NOT NULL, requirements TEXT NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (employer_id) REFERENCES users(id) ON DELETE CASCADE );
+CREATE TABLE applications ( id INT PRIMARY KEY AUTO_INCREMENT, job_id INT NOT NULL, job_seeker_id INT NOT NULL, cover_letter TEXT, status ENUM('pending','approved','rejected') DEFAULT 'pending', applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE, FOREIGN KEY (job_seeker_id) REFERENCES users(id) ON DELETE CASCADE );
+INSERT INTO users (name, email, password, role) VALUES ('Demo Employer', 'employer@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'employer'), ('Demo Seeker', 'seeker@test.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'job_seeker');

@@ -1,0 +1,11 @@
+if(!isset($_SESSION['user_id'])) { header("Location: login.php"); exit(); }
+<?php require_once 'config/database.php';
+if(!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'employer') { header("Location: login.php"); exit(); }
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $stmt = $pdo->prepare("INSERT INTO jobs (employer_id, title, company, location, salary, job_type, description, requirements) VALUES (?,?,?,?,?,?,?,?)");
+    $stmt->execute([$_SESSION['user_id'], $_POST['title'], $_POST['company'], $_POST['location'], $_POST['salary'], $_POST['job_type'], $_POST['description'], $_POST['requirements']]);
+    echo "<script>alert('Job posted successfully!'); window.location='dashboard.php';</script>";
+    exit();
+}
+?>
+<!DOCTYPE html><html><head><title>Post Job</title><script src="https://cdn.tailwindcss.com"></script></head><body class="bg-gray-100 p-8"><div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-8"><h1 class="text-3xl font-bold mb-6">Post a New Job</h1><form method="POST" class="space-y-4"><input type="text" name="title" placeholder="Job Title" required class="w-full p-3 border rounded"><input type="text" name="company" placeholder="Company Name" required class="w-full p-3 border rounded"><input type="text" name="location" placeholder="Location" required class="w-full p-3 border rounded"><input type="text" name="salary" placeholder="Salary (e.g., $50k)" class="w-full p-3 border rounded"><select name="job_type" class="w-full p-3 border rounded"><option>Full-time</option><option>Part-time</option><option>Contract</option><option>Remote</option></select><textarea name="description" rows="5" placeholder="Job Description" required class="w-full p-3 border rounded"></textarea><textarea name="requirements" rows="3" placeholder="Requirements" required class="w-full p-3 border rounded"></textarea><button type="submit" class="bg-indigo-600 text-white px-6 py-3 rounded-lg w-full hover:bg-indigo-700">Post Job</button></form><a href="dashboard.php" class="block text-center mt-4 text-indigo-600">← Cancel</a></div></body></html>
